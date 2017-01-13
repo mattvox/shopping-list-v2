@@ -4,7 +4,8 @@
   "description": "Shopping List API",
   "main": "server.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "nodemon"
   },
   "author": "Matthew Bliffert",
   "license": "ISC",
