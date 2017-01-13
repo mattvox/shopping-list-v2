@@ -27,7 +27,7 @@ var Storage = {
         if (this.items[i].id == id && name != "" && name != undefined) {
             this.items[i].name = name;
             item = this.items[i];
-            break;
+            return item;
         }
     }
     return item;
@@ -78,16 +78,11 @@ app.delete('/items/:id', jsonParser, function(request, response) {
 app.put('/items/:id', jsonParser, function(request, response) {
     var item = storage.editItem(request.params.id, request.body.name);
     
-    if (item.hasOwnProperty('name')) {
+    if (item.hasOwnProperty('name') && item.hasOwnProperty('id')) {
         response.status(200).json(item);
     } else {
         response.status(403).json({status: "Bad request"});
     }
-    
-    
-//    If the request is incorrectly formed (bad body, missing id), the request should fail gracefully
-//    If a non-existent ID is supplied, your endpoint should create a new item using the ID supplied.
-//    Remember that you're passing the ID in the request.params and the request.body, so you should check that they match as well.
 })
 
 app.put('/items/', jsonParser, function(request, response){
