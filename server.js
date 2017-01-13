@@ -23,7 +23,6 @@ var Storage = {
   },
   editItem: function(id, name) {
     var item = {};
-//      console.log('name', name);
     for (var i = 0; i < this.items.length; i++) {
         if (this.items[i].id == id && name != "" && name != undefined) {
             this.items[i].name = name;
@@ -64,19 +63,20 @@ app.post('/items', jsonParser, function(request, response) {
     response.status(201).json(item);
 });
 
-app.delete('/items/:id', jsonParser, function(request, response) {        
+app.delete('/items/', jsonParser, function(request, response){
+    response.status(404).json({message: "Sorry, not a supported endpoint"});
+});
+
+app.delete('/items/:id', jsonParser, function(request, response) {
     if (storage.deleteItem(request.params.id)) {
         response.status(200).json(storage.items);
     } else {
-//        console.log('failure');
-//        return response.sendStatus(404);
         response.status(404).json({status: "Item not found"});
     }
 })
 
 app.put('/items/:id', jsonParser, function(request, response) {
     var item = storage.editItem(request.params.id, request.body.name);
-//    console.log(item, 'item');
     
     if (item.hasOwnProperty('name')) {
         response.status(200).json(item);
@@ -89,6 +89,10 @@ app.put('/items/:id', jsonParser, function(request, response) {
 //    If a non-existent ID is supplied, your endpoint should create a new item using the ID supplied.
 //    Remember that you're passing the ID in the request.params and the request.body, so you should check that they match as well.
 })
+
+app.put('/items/', jsonParser, function(request, response){
+    response.status(403).json({message: "Sorry, not a supported endpoint"});
+});
 
 app.listen(process.env.PORT || 8080, function() {
     console.log("Running...");

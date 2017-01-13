@@ -76,6 +76,7 @@ describe('Shopping List', function() {
         })
     });
     
+    
     it('should delete an item on DELETE', function(done) {
         chai.request(app)
             .delete('/items/2')
@@ -117,10 +118,45 @@ describe('Shopping List', function() {
         });
     })
     
+    it('should FAIL PUT to an ID that does not exist', function(done) {
+        chai.request(app)
+            .put('/items/jkhdsfgghjkdf')
+            .send({'name': 'Does Not Exist'})
+            .end(function(err, res) {
+                res.should.be.json;
+                res.should.have.status(403);
+                done();
+        })
+    })
+    
     it('should FAIL PUT if you try to edit item without an ID as endpoint', function(done) {
         chai.request(app)
-            .put('/items/asdasd')
+            .put('/items/')
             .send({'name': 'Changed'})
+            .end(function(err, res) {
+                res.should.be.json;
+                res.body.message.should.equal("Sorry, not a supported endpoint");
+                res.should.have.status(403);
+                done();
+        });
+    })
+    
+    it('should FAIL PUT without body data', function(done) {
+        chai.request(app)
+            .put('/items/1')
+            .send({})
+            .end(function(err, res) {
+                res.should.be.json;
+                res.body.status.should.equal("Bad request");
+                res.should.have.status(403);
+                done();
+        });
+    })
+    
+    it('should FAIL PUT without valid JSON', function(done) {
+        chai.request(app)
+            .put('/items/1')
+            .send("This is not valid JSON")
             .end(function(err, res) {
                 res.should.be.json;
                 res.body.status.should.equal("Bad request");
@@ -143,10 +179,10 @@ describe('Shopping List', function() {
     
     it('should FAIL DELETE if you try to delete without an ID as endpoint', function(done) {
         chai.request(app)
-            .delete('/items/asdasd')
+            .delete('/items/')
             .end(function(err, res) {
                 res.should.be.json;
-                res.body.status.should.equal("Item not found");
+                res.body.message.should.equal("Sorry, not a supported endpoint");
                 res.should.have.status(404);
                 done();
         });
@@ -155,13 +191,7 @@ describe('Shopping List', function() {
 
 
 //Stub the following tests:
-
 //POST to an ID that exists?????
 //POST with something other than valid JSON?????
-
-//PUT without an ID in the endpoint?????
-//PUT to an ID that doesn't exist?????
-
 //PUT with different ID in the endpoint than the body
-//PUT without body data
 //PUT with something other than valid JSON
